@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Classement</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.2.0/anime.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'gilroyextrabold';
+      src: url('./assets/fonts/gilroy-extrabold-webfont.woff2') format('woff2'),
+          url('./assets/fonts/gilroy-extrabold-webfont.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'norwester';
+      src: url('./assets/fonts/norwester-webfont.woff2') format('woff2'),
+          url('./assets/fonts/norwester-webfont.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+    body{
+      font-family: 'norwester', Arial, Helvetica, sans-serif;
+      color:#fff;
+      text-align: center;
+      overflow: hidden;
+      margin: auto;
+      width: 1920px;
+      height:1080px;
+      background: linear-gradient(180deg, rgba(45, 177, 255, 0.9) 56.35%, rgba(39, 63, 104, 0) 100%);
+    }
+    button{
+      font-size: 20px;
+    }
+    #app{
+      width: 1260px;
+      margin: auto;
+    } 
+    .match{
+      display: grid;
+      grid-template-columns: 420px 420px 420px;
+      grid-row-gap: 30px;
+      margin: 50px 0;
+    }
+
+    .score-block{
+      font-family: 'gilroyextrabold', Arial, Helvetica, sans-serif;
+      font-size: 30px;
+      text-transform: uppercase;
+      width: 420px;
+      color: #fff;
+      text-align: center;
+      background-color: var(--bg-color);
+      align-self: center;
+      justify-self: center;
+      display: grid;
+      grid-template-columns: 1fr 85px;
+      grid-template-rows: 66px;
+      align-items: center;
+    }
+    .score-block > div{
+      outline: none;
+    }
+    .points{
+      font-size:40px;
+      align-self: stretch;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      background-color:var(--bg-color);
+    }
+    .suptitle, .logo, .title, .subtitle{
+      position: absolute;
+      left: 0;
+      right: 0;
+      top:150px;
+      margin: auto
+    }
+    .heures{
+      position: absolute;
+      margin: auto;
+      font-size: 25px;
+      margin-left: -280px;
+      margin-top: 15px;
+    }
+    .suptitle{
+      font-size: 40px;
+    }
+    .title{
+      font-size: 120px;
+      top:200px;
+    }
+    .subtitle{
+      font-size: 60px;
+    }
+    .nextMatch{
+      position: absolute;
+      width: 225px;
+      height: 55px;
+      left: 848px;
+      top: 673px;
+      font-size: 40px;
+    }
+    .nextMatchEquipes{
+      position: absolute;
+      left: 331px;
+      top: 772px;
+    }
+    .equipes{
+      position: absolute;
+      top: 362px;
+      margin-left: 100px;
+    }
+    .slide1 .logo{
+      margin:auto;
+      top:0;
+      width: 1000px;
+    }
+    .slide2 .logo{
+      width:400px;
+      top:350px;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="app">
+
+    <div class="slide1">
+      <img class="logo" src="./assets/images/Logo.svg" width="800"/>
+    </div>
+
+    <div class="slide2">
+      <div class="suptitle">Organisee par le</div>
+      <img class="logo" src="./assets/images/LKC.svg"/>
+    </div>
+
+    <div class="slide3">
+      <div class="suptitle">Programme et resultats</div>
+      <div class="title">Junior</div>
+      <div class="equipes">
+          <div class="match" v-for="(match,index) in ligues[0]">
+            
+            <p class="heures">{{match[0]}} - {{match[2]}}</p>
+
+            <div class="score">
+              <div class="score-block" :style="{'--bg-color': couleurs.bleu.couleurClaire}">
+                <div>{{match[3]}}</div>
+                <div class="points" :class="match.nomCouleur" :style="{'--bg-color': couleurs.bleu.couleurFoncee}"><span>{{match[4]}}</span></div>
+              </div>
+            </div>
+
+            <div class="score">
+              <div class="score-block" :style="{'--bg-color': couleurs.gris.couleurClaire}">
+                <div>{{match[5]}}</div>
+                <div class="points" :class="match.nomCouleur" :style="{'--bg-color': couleurs.gris.couleurFoncee}"><span>{{match[6]}}</span></div>
+              </div>
+            </div>
+
+            <div class="score">
+              <div class="score-block" :style="{'--bg-color': couleurs.noir.couleurClaire}">
+                <div>{{match[7]}}</div>
+                <div class="points" :class="match.nomCouleur" :style="{'--bg-color': couleurs.noir.couleurFoncee}"><span>{{match[8]}}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="slide4">
+      <div class="suptitle">Programme et resultats</div>
+      <div class="title">LNB</div>
+      <div class="equipes">
+          <div class="match" v-for="(match,index) in ligues[1]">
+
+            <p class="heures">{{match[0]}} - {{match[2]}}</p>
+              
+            <div class="score">
+              <div class="score-block" :style="{'--bg-color': couleurs.bleu.couleurClaire}">
+                <div>{{match[3]}}</div>
+                <div class="points" :class="match.nomCouleur" :style="{'--bg-color': couleurs.bleu.couleurFoncee}"><span>{{match[4]}}</span></div>
+              </div>
+            </div>
+
+            <div class="score">
+              <div class="score-block" :style="{'--bg-color': couleurs.gris.couleurClaire}">
+                <div>{{match[5]}}</div>
+                <div class="points" :class="match.nomCouleur" :style="{'--bg-color': couleurs.gris.couleurFoncee}"><span>{{match[6]}}</span></div>
+              </div>
+            </div>
+
+            <div class="score">
+              <div class="score-block" :style="{'--bg-color': couleurs.noir.couleurClaire}">
+                <div>{{match[7]}}</div>
+                <div class="points" :class="match.nomCouleur" :style="{'--bg-color': couleurs.noir.couleurFoncee}"><span>{{match[8]}}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="slide5">
+      <div class="suptitle">Programme et resultats</div>
+      <div class="title">LNA</div>
+      <div class="equipes">
+          <div class="match" v-for="(match,index) in ligues[2]">
+
+            <p class="heures">{{match[0]}} - {{match[2]}}</p>
+              
+            <div class="score">
+              <div class="score-block" :style="{'--bg-color': couleurs.bleu.couleurClaire}">
+                <div>{{match[3]}}</div>
+                <div class="points" :class="match.nomCouleur" :style="{'--bg-color': couleurs.bleu.couleurFoncee}"><span>{{match[4]}}</span></div>
+              </div>
+            </div>
+
+            <div class="score">
+              <div class="score-block" :style="{'--bg-color': couleurs.gris.couleurClaire}">
+                <div>{{match[5]}}</div>
+                <div class="points" :class="match.nomCouleur" :style="{'--bg-color': couleurs.gris.couleurFoncee}"><span>{{match[6]}}</span></div>
+              </div>
+            </div>
+
+            <div class="score">
+              <div class="score-block" :style="{'--bg-color': couleurs.noir.couleurClaire}">
+                <div>{{match[7]}}</div>
+                <div class="points" :class="match.nomCouleur" :style="{'--bg-color': couleurs.noir.couleurFoncee}"><span>{{match[8]}}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+  </div>
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data () {
+        return {
+          refreshInterval: 500,
+          ligues: [],
+          couleurs:{
+            bleu:{
+                couleurClaire:"#24A6D4",
+                couleurFoncee:"#118CB8"
+            },
+            gris:{
+              couleurClaire:"#A8A8A8",
+              couleurFoncee:"#969696"
+            },
+            noir:{
+              couleurClaire:"#212121",
+              couleurFoncee:"#000"
+            }
+          }
+        }
+      },
+      methods:{
+        loadData () {
+
+          fetch('Interface.ods')
+            .then(response => response.blob())
+            .then(response => {
+              let reader = new FileReader()
+              var vm = this
+              reader.addEventListener("loadend", function() {
+                let data = new Uint8Array(this.result)
+                let wb = XLSX.read(data, {type:"array"})
+                let junior = XLSX.utils.sheet_to_json(wb.Sheets.classement, {blankrows:false,range:'B2:J5',header:1,raw:true})
+                let lnb = XLSX.utils.sheet_to_json(wb.Sheets.classement, {blankrows:false,range:'B6:J9',header:1,raw:true})
+                let lna = XLSX.utils.sheet_to_json(wb.Sheets.classement, {blankrows:false,range:'B9:J10',header:1,raw:true})
+                vm.ligues = [junior, lnb, lna]
+              })
+              reader.readAsArrayBuffer(response)
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        }
+      },
+      beforeDestroy (){
+        clearInterval(this.interval)
+      },
+      mounted(){
+        this.loadData()
+
+        this.interval = setInterval(function () {
+          this.loadData()
+        }.bind(this), this.refreshInterval)
+
+        anime.timeline({loop: true, easing: 'linear'})
+          .add({
+            targets: `.slide1 img`,
+            opacity: [0,1],
+            duration: 1000
+          })
+          .add({
+            targets: `.slide1 .nextMatch, .slide1 .match`,
+            opacity: [0,1],
+            duration: 1500,
+            delay: function(el, i, l) {
+              return i * 200;
+            }
+          })
+          .add({
+            targets: `.slide1 > div, .slide1 img`,
+            opacity: [1,0],
+            delay: 3000,
+            duration: 1000
+          })
+          .add({
+            targets: `.slide2 .suptitle`,
+            opacity: [0,1],
+            duration: 1000
+          })
+          .add({
+            targets: `.slide2 img`,
+            opacity: [0,1],
+            duration: 1000
+          })
+          .add({
+            targets: `.slide2 > div, .slide2 img`,
+            opacity: [1,0],
+            delay: 3000,
+            duration: 1000
+          })
+          .add({
+            targets: `.slide3 .suptitle, .slide3 .title, .slide3 .equipes`,
+            opacity: [0,1],
+            duration: 1000
+          })
+          .add({
+            targets: `.slide3 .score`,
+            opacity: [0,1],
+            duration: 1000,
+            delay: function(el, i, l) {
+              return i * 200;
+            }
+          })
+          .add({
+            targets: `.slide3 > div`,
+            opacity: [1,0],
+            delay: 10000,
+            duration: 1000
+          })
+          .add({
+            targets: `.slide4 .suptitle, .slide4 .title, .slide4 .equipes`,
+            opacity: [0,1],
+            duration: 1000
+          })
+          .add({
+            targets: `.slide4 .score`,
+            opacity: [0,1],
+            duration: 1000,
+            delay: function(el, i, l) {
+              return i * 200;
+            }
+          })
+          .add({
+            targets: `.slide4 > div`,
+            opacity: [1,0],
+            delay: 10000,
+            duration: 1000
+          })
+          .add({
+            targets: `.slide5 .suptitle, .slide5 .title, .slide5 .equipes`,
+            opacity: [0,1],
+            duration: 1000
+          })
+          .add({
+            targets: `.slide5 .score`,
+            opacity: [0,1],
+            duration: 1000,
+            delay: function(el, i, l) {
+              return i * 200;
+            }
+          })
+          .add({
+            targets: `.slide5 > div`,
+            opacity: [1,0],
+            delay: 10000,
+            duration: 1000
+          })
+          
+      }
+    })
+  </script>
+</body>
+</html>

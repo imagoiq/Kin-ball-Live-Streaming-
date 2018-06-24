@@ -1,5 +1,5 @@
 # Kin-Ball Live Streaming Guide
 
-CurrentlyiIn translation
+Currently in translation
 
-Please read the [french translation](README_FR.MD)
+Please read the [french version](README_FR.MD)

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ProchainMatchClassement</title>
+  <script src="./js/vendors/vue.js"></script>
+  <script src="./js/vendors/anime.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'gilroyextrabold';
+      src: url('./assets/fonts/gilroy-extrabold-webfont.woff2') format('woff2'),
+          url('./assets/fonts/gilroy-extrabold-webfont.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+    body{
+      overflow: hidden;
+      margin: auto;
+      width: 1920px;
+      height:1080px;
+      background: linear-gradient(180deg, rgba(39, 63, 104, 0.9) 56.35%, rgba(39, 63, 104, 0) 100%);;
+    }
+    button{
+      font-size: 20px;
+    }
+    #app{
+      width: 1260px;
+      margin: auto;
+    } 
+    .equipes{
+      display: grid;
+      grid-template-columns: 420px 420px 420px;
+      grid-row-gap: 30px;
+    }
+    .match{
+      display: grid;
+      grid-template-rows: 80px;
+      grid-gap: 50px;
+      width: 420px;
+    }
+    .score-block{
+      font-family: 'gilroyextrabold', Arial, Helvetica, sans-serif;
+      font-size: 30px;
+      text-transform: uppercase;
+      width: 420px;
+      color: #fff;
+      text-align: center;
+      background-color: var(--bg-color);
+      align-self: center;
+      justify-self: center;
+      display: grid;
+      grid-template-columns: 1fr 85px;
+      grid-template-rows: 66px;
+      align-items: center;
+    }
+    .score-block > div{
+      outline: none;
+    }
+    .points{
+      font-size:40px;
+      align-self: stretch;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      background-color:var(--bg-color);
+    }
+    .visHidden{
+      visibility: hidden;
+    }
+    .suptitle{
+      position: absolute;
+width: 324px;
+height: 55px;
+left: 798px;
+top: 268px;
+
+font-family: Oswald;
+font-style: italic;
+font-weight: normal;
+line-height: normal;
+font-size: 40px;
+
+color: #FFFFFF;
+    }
+    .title{
+      position: absolute;
+width: 594px;
+height: 218px;
+left: 663px;
+top: 296px;
+
+font-family: Oswald;
+font-style: italic;
+font-weight: 600;
+line-height: normal;
+font-size: 160px;
+text-transform: uppercase;
+
+color: #FFFFFF;
+    }
+    .subtitle{
+      position: absolute;
+width: 521px;
+height: 82px;
+left: 700px;
+top: 478px;
+
+font-family: Oswald;
+font-style: italic;
+font-weight: normal;
+line-height: normal;
+font-size: 60px;
+
+color: #FFFFFF;
+    }
+    .nextMatch{
+      position: absolute;
+width: 225px;
+height: 55px;
+left: 848px;
+top: 673px;
+
+font-family: Oswald;
+font-style: italic;
+font-weight: normal;
+line-height: normal;
+font-size: 40px;
+
+color: #FFFFFF;
+    }
+    .nextMatchEquipes{
+      position: absolute;
+      left: 331px;
+top: 772px;
+    }
+    .slide1 .lineLeft{
+      position: absolute;
+width: 747px;
+height: 7px;
+left: 0px;
+top: 289px;
+
+background: #42ADD3;
+    }
+    .slide1 .lineRight{
+      position: absolute;
+width: 650px;
+height: 7px;
+left: 1270px;
+top: 519px;
+
+background: #42ADD3;
+    }
+    .slide2 .lineLeft{
+      position: absolute;
+width: 747px;
+height: 7px;
+left: 0px;
+top: 389px;
+
+background: #42ADD3;
+    }
+    .slide2 .lineRight{
+      position: absolute;
+width: 695px;
+height: 7px;
+left: 1225px;
+top: 619px;
+
+background: #42ADD3;
+    }
+    .slide3 .lineLeft, .slide4 .lineLeft{
+      position: absolute;
+width: 747px;
+height: 7px;
+left: 0px;
+top: 149px;
+
+background: #42ADD3;
+    }
+    .slide3 .equipes, .slide4 .equipes{
+      position: absolute;
+    top: 362px;
+    }
+    .slide2 .logo{
+      position: absolute;
+width: 414.32px;
+height: 245.31px;
+left: 768.57px;
+top: 468.42px;
+    }
+    .slide3 .suptitle, .slide4 .suptitle{
+      position: absolute;
+width: 340px;
+height: 55px;
+left: 798px;
+top: 128px;
+
+font-family: Oswald;
+font-style: italic;
+font-weight: normal;
+line-height: normal;
+font-size: 40px;
+
+color: #FFFFFF;
+    }
+    .slide2 .suptitle{
+      position: absolute;
+left: 844px;
+top: 368px;
+
+font-family: Oswald;
+font-style: italic;
+font-weight: normal;
+line-height: normal;
+font-size: 40px;
+
+color: #FFFFFF;
+    }
+    .slide4 .title, .slide3 .title{
+      position: absolute;
+width: 87px;
+height: 82px;
+left: 910px;
+top: 204px;
+
+font-family: Oswald;
+font-style: italic;
+font-weight: normal;
+line-height: normal;
+font-size: 60px;
+
+color: #FFFFFF;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="app">
+
+    <div class="slide1">
+      <div class="lineLeft"></div>
+      <div class="lineRight"></div>
+      <div class="suptitle">Samedi 24 mars 2018</div>
+      <div class="title">Kin-Ball</div>
+      <div class="subtitle">Journée de championnat</div>
+      <div class="nextMatch">Merci de nous avoir suivi</div>
+    </div>
+
+    <div class="slide2">
+      <div class="lineLeft"></div>
+      <div class="lineRight"></div>
+      <div class="suptitle">Organisée par les</div>
+      <img class="logo" src="./assets/images/Logo Pantheres_slide.svg"/>
+    </div>
+
+    <div class="slide3">
+      <div class="lineLeft"></div>
+      <div class="suptitle">Programme et résultats</div>
+      <div class="title">LNB</div>
+      <div class="equipes">
+          <div class="match" v-for="(equipe,index) in programmeLNB">
+              
+              <div class="score">
+                <div class="score-block" :style="{'--bg-color': equipe.couleurClaire}">
+                  <div>{{equipe.nom}}</div>
+                  <div class="points" :class="equipe.nomCouleur" :style="{'--bg-color': equipe.couleurFoncee}"><span>{{equipe.score}}</span></div>
+                </div>
+              </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="slide4">
+        <div class="lineLeft"></div>
+        <div class="suptitle">Programme et résultats</div>
+        <div class="title">LNA</div>
+        <div class="equipes">
+            <div class="match" v-for="(equipe,index) in programmeLNA">
+                
+                <div class="score">
+                  <div class="score-block" :style="{'--bg-color': equipe.couleurClaire}">
+                    <div>{{equipe.nom}}</div>
+                    <div class="points" :class="equipe.nomCouleur" :style="{'--bg-color': equipe.couleurFoncee}"><span>{{equipe.score}}</span></div>
+                  </div>
+                </div>
+            </div>
+          </div>
+      </div>
+
+  </div>
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        nextMatch:[
+          {
+            nomCouleur: 'bleu',
+            nom: 'Yverdon 1',
+            couleurClaire: '#24A6D4',
+            couleurFoncee: '#118CB8'
+          },
+          {
+            nomCouleur: 'gris',
+            nom: 'Cudrefin 1',
+            couleurClaire: '#A8A8A8',
+            couleurFoncee: '#969696'
+          },
+          {
+            nomCouleur: 'noir',
+            nom: 'Neuchâtel 1',
+            couleurClaire: '#212121',
+            couleurFoncee: '#000'
+          }
+        ],
+        programmeLNB:[
+          {
+            nomCouleur: 'bleu',
+            nom: 'Genève',
+            score: '-3',
+            couleurClaire: '#24A6D4',
+            couleurFoncee: '#118CB8'
+          },
+          {
+            nomCouleur: 'gris',
+            nom: 'Yverdon 3',
+            score: 3,
+            couleurClaire: '#A8A8A8',
+            couleurFoncee: '#969696'
+          },
+          {
+            nomCouleur: 'noir',
+            nom: 'Gibloux 1',
+            score: 1,
+            couleurClaire: '#212121',
+            couleurFoncee: '#000'
+          },
+
+
+          {
+            nomCouleur: 'bleu',
+            nom: 'Gibloux 1',
+            score:0,
+            couleurClaire: '#24A6D4',
+            couleurFoncee: '#118CB8'
+          },
+          {
+            nomCouleur: 'gris',
+            nom: 'Cudrefin 2',
+            score: 3,
+            couleurClaire: '#A8A8A8',
+            couleurFoncee: '#969696'
+          },
+          {
+            nomCouleur: 'noir',
+            nom: 'Neuchâtel 2',
+            score: 1,
+            couleurClaire: '#212121',
+            couleurFoncee: '#000'
+          },
+
+          {
+            nomCouleur: 'bleu',
+            nom: 'Neuchâtel 2',
+            score:3,
+            couleurClaire: '#24A6D4',
+            couleurFoncee: '#118CB8'
+          },
+          {
+            nomCouleur: 'gris',
+            nom: 'Bienne',
+            score: 1,
+            couleurClaire: '#A8A8A8',
+            couleurFoncee: '#969696'
+          },
+          {
+            nomCouleur: 'noir',
+            nom: 'Genève',
+            score: '-3',
+            couleurClaire: '#212121',
+            couleurFoncee: '#000'
+          },
+
+          {
+            nomCouleur: 'bleu',
+            nom: 'Le Locle B',
+            score:1,
+            couleurClaire: '#24A6D4',
+            couleurFoncee: '#118CB8'
+          },
+          {
+            nomCouleur: 'gris',
+            nom: 'Cudrefin 2',
+            score: 0,
+            couleurClaire: '#A8A8A8',
+            couleurFoncee: '#969696'
+          },
+          {
+            nomCouleur: 'noir',
+            nom: 'Panthères',
+            score: 3,
+            couleurClaire: '#212121',
+            couleurFoncee: '#000'
+          }
+
+        ],
+
+        programmeLNA:[
+          {
+            nomCouleur: 'bleu',
+            nom: 'Lausanne',
+            score: 0,
+            couleurClaire: '#24A6D4',
+            couleurFoncee: '#118CB8'
+          },
+          {
+            nomCouleur: 'gris',
+            nom: 'Le Locle A',
+            score: 1,
+            couleurClaire: '#A8A8A8',
+            couleurFoncee: '#969696'
+          },
+          {
+            nomCouleur: 'noir',
+            nom: 'Neuchâtel 1',
+            score: 3,
+            couleurClaire: '#212121',
+            couleurFoncee: '#000'
+          },
+
+
+          {
+            nomCouleur: 'bleu',
+            nom: 'Yverdon 2',
+            score: 0,
+            couleurClaire: '#24A6D4',
+            couleurFoncee: '#118CB8'
+          },
+          {
+            nomCouleur: 'gris',
+            nom: 'Yverdon 1',
+            score: 3,
+            couleurClaire: '#A8A8A8',
+            couleurFoncee: '#969696'
+          },
+          {
+            nomCouleur: 'noir',
+            nom: 'Cudrefin 1',
+            score: 1,
+            couleurClaire: '#212121',
+            couleurFoncee: '#000'
+          },
+
+          {
+            nomCouleur: 'bleu',
+            nom: 'Le Locle A',
+            score: 3,
+            couleurClaire: '#24A6D4',
+            couleurFoncee: '#118CB8'
+          },
+          {
+            nomCouleur: 'gris',
+            nom: 'Lausanne',
+            score: 0,
+            couleurClaire: '#A8A8A8',
+            couleurFoncee: '#969696'
+          },
+          {
+            nomCouleur: 'noir',
+            nom: 'Yverdon 2',
+            score: 1,
+            couleurClaire: '#212121',
+            couleurFoncee: '#000'
+          },
+
+          {
+            nomCouleur: 'bleu',
+            nom: 'Yverdon 1',
+            score: 1,
+            couleurClaire: '#24A6D4',
+            couleurFoncee: '#118CB8'
+          },
+          {
+            nomCouleur: 'gris',
+            nom: 'Cudrefin 1',
+            score: 0,
+            couleurClaire: '#A8A8A8',
+            couleurFoncee: '#969696'
+          },
+          {
+            nomCouleur: 'noir',
+            nom: 'Neuchâtel 1',
+            score: 3,
+            couleurClaire: '#212121',
+            couleurFoncee: '#000'
+          }
+         ]
+      },
+      mounted(){
+        anime.timeline({loop: true, easing: 'linear'})
+          .add({
+            targets: `.slide1 .lineLeft, .slide1 .lineRight`,
+            opacity: [0,1],
+            delay: 3000,
+            duration: 1000
+          })
+          .add({
+            targets: `.slide1 .suptitle, .slide1 .title, .slide1 .subtitle`,
+            opacity: [0,1],
+            duration: 1000
+          })
+          .add({
+            targets: `.slide1 .nextMatch, .slide1 .match`,
+            opacity: [0,1],
+            duration: 1500,
+            delay: function(el, i, l) {
+              return i * 200;
+            }
+          })
+          .add({
+            targets: `.slide1 > div`,
+            opacity: [1,0],
+            delay: 3000,
+            duration: 1000
+          })
+          .add({
+            targets: `.slide2 .lineLeft, .slide2 .lineRight`,
+            opacity: [0,1],
+            delay: 800,
+            duration: 1000
+          })
+          .add({
+            targets: `.slide2 .suptitle`,
+            opacity: [0,1],
+            duration: 1000
+          })
+          .add({
+            targets: `.slide2 img`,
+            opacity: [0,1],
+            duration: 1000
+          })
+          .add({
+            targets: `.slide2 > div, .slide2 img`,
+            opacity: [1,0],
+            delay: 3000,
+            duration: 1000
+          })
+          .add({
+            targets: `.slide3 .lineLeft, .slide3 .lineRight`,
+            opacity: [0,1],
+            delay: 800,
+            duration: 1000
+          })
+          .add({
+            targets: `.slide3 .suptitle, .slide3 .title`,
+            opacity: [0,1],
+            duration: 1000
+          })
+          .add({
+            targets: `.slide3 .match`,
+            opacity: [0,1],
+            duration: 1000,
+            delay: function(el, i, l) {
+              return i * 200;
+            }
+          })
+          .add({
+            targets: `.slide3 > div`,
+            opacity: [1,0],
+            delay: 10000,
+            duration: 1000
+          })
+          .add({
+            targets: `.slide4 .lineLeft, .slide4 .lineRight`,
+            opacity: [0,1],
+            delay: 800,
+            duration: 1000
+          })
+          .add({
+            targets: `.slide4 .suptitle, .slide4 .title`,
+            opacity: [0,1],
+            duration: 1000
+          })
+          .add({
+            targets: `.slide4 .match`,
+            opacity: [0,1],
+            duration: 1000,
+            delay: function(el, i, l) {
+              return i * 200;
+            }
+          })
+          .add({
+            targets: `.slide4 > div`,
+            opacity: [1,0],
+            delay: 10000,
+            duration: 1000
+          })
+          
+      }
+    })
+  </script>
+</body>
+</html>

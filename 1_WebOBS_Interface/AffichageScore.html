@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Score</title>
+  <script src="./js/vendors/vue.js"></script>
+  <script src="./js/vendors/anime.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'gilroyextrabold';
+      src: url('./assets/fonts/gilroy-extrabold-webfont.woff2') format('woff2'),
+          url('./assets/fonts/gilroy-extrabold-webfont.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+    body{
+      overflow: hidden;
+      margin: auto;
+      width: 1920px;
+    }
+    button{
+      font-size: 20px;
+    }
+    #app{
+      width: 1260px;
+      margin: auto;
+    } 
+    #equipes{
+      display: grid;
+      grid-template-columns: 420px 420px 420px;
+    }
+    .equipe{
+      display: grid;
+      grid-template-rows: 50px 50px 50px 80px;
+      grid-gap: 20px;
+      width: 420px;
+    }
+    .score-block{
+      font-family: 'gilroyextrabold', Arial, Helvetica, sans-serif;
+      font-size: 30px;
+      text-transform: uppercase;
+      width: 420px;
+      color: #fff;
+      text-align: center;
+      background-color: var(--bg-color);
+      align-self: center;
+      justify-self: center;
+      display: grid;
+      grid-template-columns: 1fr 85px;
+      grid-template-rows: 66px;
+      align-items: center;
+    }
+    .score-block > div{
+      outline: none;
+    }
+    .points{
+      font-size:40px;
+      align-self: stretch;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      background-color:var(--bg-color);
+    }
+    .periodeGagnee{
+      margin:0;
+      padding:0;
+      background-color: var(--bg-color);
+      height:15px;
+    }
+    .periodeGagnee li{
+      list-style: none;
+      display:inline-block;
+      width:130px;
+      background-color:#fff;
+      height:5px;
+      margin-left: 7px;
+      position: relative;
+      top: -5px;
+    }
+    .visHidden{
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body spellcheck=false>
+  <div id="app">
+    <button @click="nouveauMatch">Nouveau Match</button>
+    <div id="equipes">
+      <div class="equipe" v-for="(equipe,index) in equipes">
+          <button @click="ajouterFaute(equipe.nomCouleur, index)">Faute</button>
+          <button @click="annulerFaute(equipe.nomCouleur, index)">Annuler Faute</button>
+          <button @click="equipe.afficher = !equipe.afficher">Cacher/afficher</button>
+          
+          <div class="score" :class="{ visHidden: !equipe.afficher }">
+            <div class="score-block" :style="{'--bg-color': equipe.couleurClaire}">
+              <div contenteditable="true">{{equipe.nom}}</div>
+              <div class="points" :class="equipe.nomCouleur" :style="{'--bg-color': equipe.couleurFoncee}"><span>{{equipe.score}}</span></div>
+            </div>
+            <ul class="periodeGagnee" :style="{'--bg-color': equipe.couleurFoncee}">
+              <transition-group v-on:enter="animEnterPeriode">
+                <li class="periode" :key="periode" v-for="periode in equipe.periodeGagnee"></li>
+              </transition-group>
+            </ul>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        equipes:[
+          {
+            nomCouleur: 'bleu',
+            nom: 'Yverdon 1',
+            score: 5,
+            periodeGagnee:0,
+            couleurClaire: '#24A6D4',
+            couleurFoncee: '#118CB8',
+            afficher:true
+          },
+          {
+            nomCouleur: 'gris',
+            nom: 'Cudrefin 1',
+            score: 3,
+            periodeGagnee:0,
+            couleurClaire: '#A8A8A8',
+            couleurFoncee: '#969696',
+            afficher:true
+          },
+          {
+            nomCouleur: 'noir',
+            nom: 'Neuchâtel 1',
+            score: 4,
+            periodeGagnee:0,
+            couleurClaire: '#212121',
+            couleurFoncee: '#000',
+            afficher:true
+          }
+        ]
+      },
+      methods:{
+        hasWonPeriode(index){
+          return this.equipes.some((equipe, key) => key != index && equipe.score === 12)
+        },
+        getIndexWinnerPeriode(){
+          return this.equipes.findIndex(equipe => equipe.score === 12)
+        },
+        ajouterFaute(couleur, index){
+          // Test if a team has won the periode
+          if(this.hasWonPeriode(index)){
+            this.periodeGagnee(this.getIndexWinnerPeriode());
+          }
+          else{
+            this.equipes.map((equipe, key) => {
+              if(key != index && equipe.afficher)
+                equipe.score +=1
+            });
+          
+            anime.timeline()
+              .add({
+                targets: `.points:not(.${couleur}) span`,
+                opacity: [0,1],
+                scale: [0.2, 1],
+                duration: 800
+              })
+          }
+        },
+        annulerFaute(couleur, index){
+          // Test if a team has won the periode
+          if(this.hasWonPeriode(index)){
+            this.periodeGagnee(this.getIndexWinnerPeriode());
+          }
+          else{
+            this.equipes.map((equipe, key) => {
+              if(key != index && equipe.afficher && equipe.score > 0)
+                equipe.score -=1
+            });
+          
+            anime.timeline()
+              .add({
+                targets: `.points:not(.${couleur}) span`,
+                opacity: [0,1],
+                scale: [0.2, 1],
+                duration: 800
+              })
+          }
+        },
+        periodeGagnee(index){
+          this.equipes.map((equipe, key) => {
+            if(key == index && equipe.periodeGagnee < 3)
+              equipe.periodeGagnee +=1;
+          });
+          this.reinitialiserScores();
+          this.reinitialiserAffichage();
+        },
+        nouveauMatch(){
+          this.reinitialiserScores();
+          this.reinitialiserPeriodes();
+          this.reinitialiserAffichage();
+        },
+        reinitialiserScores(){
+          this.equipes.map(equipe => equipe.score=0);
+        },
+        reinitialiserPeriodes(){
+          this.equipes.map(equipe => equipe.periodeGagnee=0);
+        },
+        reinitialiserAffichage(){
+          this.equipes.map(equipe => equipe.afficher=true);
+        },
+        animEnterPeriode(el, done){
+          anime({
+            targets: el,
+            opacity: [0,1],
+            scale: [0.2, 1],
+            duration: 800
+          });
+          done();
+        }
+      }
+    })
+  </script>
+</body>
+</html>

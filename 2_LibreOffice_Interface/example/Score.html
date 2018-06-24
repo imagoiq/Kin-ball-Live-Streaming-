@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Score</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.2.0/anime.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'gilroyextrabold';
+      src: url('./assets/fonts/gilroy-extrabold-webfont.woff2') format('woff2'),
+          url('./assets/fonts/gilroy-extrabold-webfont.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+    body{
+      overflow: hidden;
+      margin: auto;
+    }
+    button{
+      font-size: 20px;
+    }
+    #app{
+      width: 1260px;
+      position:absolute;
+      left: 0;
+      right: 0;
+      margin: auto;
+      bottom: 100px;
+    } 
+    #equipes{
+      display: grid;
+      grid-template-columns: 420px 420px 420px;
+    }
+    .equipe{
+      width: 420px;
+    }
+    .score-block{
+      font-family: 'gilroyextrabold', Arial, Helvetica, sans-serif;
+      font-size: 30px;
+      text-transform: uppercase;
+      width: 420px;
+      color: #fff;
+      text-align: center;
+      background-color: var(--bg-color);
+      align-self: center;
+      justify-self: center;
+      display: grid;
+      grid-template-columns: 1fr 85px;
+      grid-template-rows: 66px;
+      align-items: center;
+    }
+    .score-block > div{
+      outline: none;
+    }
+    .points{
+      font-size:40px;
+      align-self: stretch;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      background-color:var(--bg-color);
+    }
+    .periodeGagnee{
+      margin:0;
+      padding:0;
+      background-color: var(--bg-color);
+      height:15px;
+    }
+    .periodeGagnee li{
+      list-style: none;
+      display:inline-block;
+      width:130px;
+      background-color:#fff;
+      height:5px;
+      margin-left: 7px;
+      position: relative;
+      top: -5px;
+    }
+    .visHidden{
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body spellcheck=false>
+  <div id="app">
+    <div id="equipes">
+      <div class="equipe" v-for="(equipe,index) in equipes" :key="index">
+          
+          <div class="score" :class="{ visHidden: !equipe[3] }">
+            <div class="score-block" :style="{'--bg-color': equipe[4]}">
+              <div>{{equipe[0]}}</div>
+              <div class="points" :style="{'--bg-color': equipe[5]}"><span>{{equipe[1]}}</span></div>
+            </div>
+            <ul class="periodeGagnee" :style="{'--bg-color': equipe[5]}">
+              <transition-group v-on:enter="animEnterPeriode">
+                <li class="periode" :key="periode" v-for="periode in equipe[2]"></li>
+              </transition-group>
+            </ul>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    var app = new Vue({
+      el: '#app',
+      data () {
+        return {
+          refreshInterval: 500,
+          equipes: []
+        }
+      },
+      methods:{
+        loadData () {
+
+          fetch('Interface.ods')
+            .then(response => response.blob())
+            .then(response => {
+              let reader = new FileReader()
+              var vm = this
+              reader.addEventListener("loadend", function() {
+                let data = new Uint8Array(this.result)
+                let wb = XLSX.read(data, {type:"array"})
+                let bleu = [].concat(...XLSX.utils.sheet_to_json(wb.Sheets.matchActuel, {blankrows:false,range:'B2:B10',header:1,raw:true}))
+                let gris = [].concat(...XLSX.utils.sheet_to_json(wb.Sheets.matchActuel, {blankrows:false,range:'C2:C10',header:1,raw:true}))
+                let noir = [].concat(...XLSX.utils.sheet_to_json(wb.Sheets.matchActuel, {blankrows:false,range:'D2:D10',header:1,raw:true}))
+                vm.equipes = [bleu, gris, noir]
+              })
+              reader.readAsArrayBuffer(response)
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        },
+        animEnterPeriode(el, done){
+          anime({
+            targets: el,
+            opacity: [0,1],
+            scale: [0.2, 1],
+            duration: 800
+          });
+          done();
+        }
+      },
+      mounted () {
+        this.loadData()
+
+        this.interval = setInterval(function () {
+          this.loadData()
+        }.bind(this), this.refreshInterval)
+      },
+      beforeDestroy (){
+        clearInterval(this.interval)
+      }
+    })
+  </script>
+</body>
+</html>
