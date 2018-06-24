@@ -35,12 +35,14 @@ Voici une petite liste de carte de capture non ex-haustive.
 
 Attention l'adaptateur n'est [compatible qu'avec un nombre limité de caméras](https://www.elgato.com/en/gaming/cam-link/camera-check) !
 
-![Elgato CAM LINK](https://media.ldlc.com/ld/products/00/04/77/44/LD0004774465_2.jpg)
+![Elgato CAM LINK](https://static.bhphoto.com/images/images500x500/elgato_systems_10026600_cam_link_1502812240000_1354530.jpg)
 
-**Magewell USB Capture HDMI Plus ~360 $**
+**Magewell USB Capture HDMI 4K Plus ~495 $**
 
 * Sortie USB
 * Limité à 1080p
+
+![Magewell USB Capture HDMI 4K Plus](https://static.bhphoto.com/images/images500x500/magewell_32090_usb_3_0_dongle_1_channel_1504638472000_1358688.jpg)
 
 **Inogeni USB 3.0 4K HDMI ~395 $**
 
